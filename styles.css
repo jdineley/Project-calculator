@@ -43,7 +43,7 @@ body {
 
 }
 
-.cell,.equals,.delete,.clear {
+.num,.equals,.delete,.clear {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -52,6 +52,6 @@ body {
     aspect-ratio: 3/2;
 }
 
-.cell:active{
+.num:active{
     box-shadow: inset 0px 0px 5px #717070;
 }
