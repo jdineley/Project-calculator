@@ -34,32 +34,38 @@ let button;
 
 function beforeEquals(e) {
     if(!calcStarted){
-        if(inputArr.length === 2){
-            numButs.forEach((but) => {
-                but.removeEventListener('click', beforeEquals);
-            });
-        }
+        // if(inputArr.length === 2){
+        //     numButs.forEach((but) => {
+        //         but.removeEventListener('click', beforeEquals);
+        //     });
+        // }
+        // let inputStr = inputArr.join('');
+        // let regex = /\d+[+|\-|*|\/]\d+/;
+        // let valid = regex.test(inputStr);
+        // if(valid)
         button = e.target.textContent;
         let clearButs = ["DEL", "C"];
         if(!clearButs.includes(button)) {
             display1.textContent += button;
             if(+button) inputArr.push(+button);
             else inputArr.push(button);
+            console.log(inputArr)
         }
     } else {
         button = e.target.textContent;
-        
+        // console.log(inputArr)
         let regex1 = /\d/;
         let regex2 = /[+|\-|*|\/]/;
         console.log(regex2.test(button))
         if(regex1.test(button)){
             inputArr = [button]
-            console.log(inputArr)
+            // console.log(inputArr)
             display1.textContent = button;
             display2.textContent = '';
             calcStarted = false;
         } else if(regex2.test(button)){
             inputArr.push(button);
+            // console.log(inputArr)
             display1.textContent = `ANS ${button}`;
             calcStarted = false;
         }
