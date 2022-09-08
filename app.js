@@ -19,6 +19,7 @@
 //          ii. No  = Write error to Display 2.  Only clear button then works.  Clear = back to 1
 //      b. Check operator then call appropriate function with args
 //      c. Function returns result and writes to Display 2
+// 3.
 // To be continued.....
 
 const display1 = document.querySelector(".display1");
@@ -27,22 +28,51 @@ const numButs = document.querySelectorAll(".num");
 const equalsBut = document.querySelector(".equals");
 const clearBut = document.querySelector(".clear");
 
-let inputArr = []
+let inputArr = [];
+let calcStarted = false;
+let button;
 
 function beforeEquals(e) {
-    let button = e.target.textContent;
-    let clearButs = ["DEL", "C"];
-    if(!clearButs.includes(button)) {
-        display1.textContent += button;
-        if(+button) inputArr.push(+button);
-        else inputArr.push(button);
+    if(!calcStarted){
+        if(inputArr.length === 2){
+            numButs.forEach((but) => {
+                but.removeEventListener('click', beforeEquals);
+            });
+        }
+        button = e.target.textContent;
+        let clearButs = ["DEL", "C"];
+        if(!clearButs.includes(button)) {
+            display1.textContent += button;
+            if(+button) inputArr.push(+button);
+            else inputArr.push(button);
+        }
+    } else {
+        button = e.target.textContent;
+        
+        let regex1 = /\d/;
+        let regex2 = /[+|\-|*|\/]/;
+        console.log(regex2.test(button))
+        if(regex1.test(button)){
+            inputArr = [button]
+            console.log(inputArr)
+            display1.textContent = button;
+            display2.textContent = '';
+            calcStarted = false;
+        } else if(regex2.test(button)){
+            inputArr.push(button);
+            display1.textContent = `ANS ${button}`;
+            calcStarted = false;
+        }
     }
+
+    // console.log(inputArr)
 }
 
 function afterEquals(e) {
     numButs.forEach((but) => {
-        but.removeEventListener('click', beforeEquals);
+        but.addEventListener('click', beforeEquals);
     })
+    calcStarted = true;
     let inputStr = inputArr.join('');
     console.log(inputStr);
     let regex = /\d+[+|\-|*|\/]\d+/;
@@ -52,24 +82,32 @@ function afterEquals(e) {
         if(inputArr.includes('+')){
             let firstNum = inputArr.slice(0, ((inputArr.indexOf('+')))).join('')
             let secondNum = inputArr.slice(inputArr.indexOf('+')+1).join('')
-            console.log(inputArr)
-            console.log(firstNum, secondNum)
-            return add(+firstNum, +secondNum)
+            // console.log(inputArr)
+            // console.log(firstNum, secondNum)
+            inputArr = [add(+firstNum, +secondNum)];
+            console.log(inputArr);
+            // add(+firstNum, +secondNum)
         } else if(inputArr.includes('-')){
             let firstNum = inputArr.slice(0, ((inputArr.indexOf('-')))).join('')
             let secondNum = inputArr.slice(inputArr.indexOf('-')+1).join('')
-            console.log(firstNum, secondNum)
-            return subtract(+firstNum, +secondNum)
+            // console.log(firstNum, secondNum)
+            inputArr = [subtract(+firstNum, +secondNum)];
+            console.log(inputArr);
+            // return subtract(+firstNum, +secondNum)
         } else if(inputArr.includes('*')){
             let firstNum = inputArr.slice(0, ((inputArr.indexOf('*')))).join('')
             let secondNum = inputArr.slice(inputArr.indexOf('*')+1).join('')
-            console.log(firstNum, secondNum)
-            return multiply(+firstNum, +secondNum)
+            // console.log(firstNum, secondNum)
+            inputArr = [multiply(+firstNum, +secondNum)];
+            console.log(inputArr);
+            // return multiply(+firstNum, +secondNum)
         }else {
             let firstNum = inputArr.slice(0, ((inputArr.indexOf('/')))).join('')
             let secondNum = inputArr.slice(inputArr.indexOf('/')+1).join('')
-            console.log(firstNum, secondNum)
-            return divide(+firstNum, +secondNum)
+            // console.log(firstNum, secondNum)
+            inputArr = [divide(+firstNum, +secondNum)];
+            console.log(inputArr);
+            // return divide(+firstNum, +secondNum)
         } 
     } else {
         display2.textContent = 'ERROR';
@@ -86,36 +124,6 @@ function clear(){
     display1.textContent = '';
 }
 
-  
-
-
-// function populateInputArray(e){
-//     let button = e.target.textContent;
-//     let clearButs = ["DEL", "C"];
-//     if(!clearButs.includes(button)) {
-//         display1.textContent += button;
-//         if(+button) inputArr.push(+button)
-//         else inputArr.push(button)
-//     }
-
-
-    // inputArr.reduce((acc, curVal) => {
-    //     if(typeof acc === 'number' && typeof curVal === 'number'){
-    //         return "" + acc + curVal;
-    //     } else if ()
-    // })
-// }
-
-// function returnResult(){
-//     console.log('=======')
-//     if(inputArr.includes('+')){
-//             console.log(inputArr)
-//             let firstNum = inputArr.slice(0, ((inputArr.indexOf('+')))).join('')
-//             let secondNum = inputArr.slice(inputArr.indexOf('+')+1).join('')
-//             console.log(firstNum, secondNum)
-//             return add(+firstNum, +secondNum)
-//     }
-// }
 
 
 numButs.forEach((but) => {
