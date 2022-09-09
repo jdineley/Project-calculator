@@ -7,12 +7,14 @@ const opButs = document.querySelectorAll(".op");
 const decPointBut = document.querySelector(".point");
 const delBut = document.querySelector(".del");
 
+
 let inputArr = [];
+let lastAns
 let calcStarted = false;
-let button;
 
 function calculation(e) {
-    
+    equalsBut.addEventListener('click', equals);
+    delBut.addEventListener('click', del);
     if(!calcStarted){
         button = e.target.textContent;
         let clearButs = ["DEL", "C"];
@@ -51,7 +53,7 @@ function calculation(e) {
                 but.removeEventListener('click', calculation);
             })
             inputArr.push(button);
-            display1.textContent = `ANS ${button}`;
+            display1.textContent = `ANS${button}`;
             calcStarted = false;
         } else if(regex3.test(button)) {
             decPointBut.removeEventListener('click', calculation); 
@@ -60,6 +62,8 @@ function calculation(e) {
 }
 
 function equals(e) {
+    equalsBut.removeEventListener('click', equals);
+    delBut.removeEventListener('click', del);
     numButs.forEach((but) => {
         but.addEventListener('click', calculation);
     })
@@ -76,22 +80,25 @@ function equals(e) {
             let firstNum = inputArr.slice(0, ((inputArr.indexOf('+')))).join('')
             let secondNum = inputArr.slice(inputArr.indexOf('+')+1).join('')
             inputArr = [add(+firstNum, +secondNum)];
+            lastAns = add(+firstNum, +secondNum)
         } else if(inputArr.includes('-')){
             let firstNum = inputArr.slice(0, ((inputArr.indexOf('-')))).join('')
             let secondNum = inputArr.slice(inputArr.indexOf('-')+1).join('')
             inputArr = [subtract(+firstNum, +secondNum)];
+            lastAns = subtract(+firstNum, +secondNum)
         } else if(inputArr.includes('*')){
             let firstNum = inputArr.slice(0, ((inputArr.indexOf('*')))).join('')
             let secondNum = inputArr.slice(inputArr.indexOf('*')+1).join('')
             inputArr = [multiply(+firstNum, +secondNum)];
+            lastAns = multiply(+firstNum, +secondNum)
         }else {
             let firstNum = inputArr.slice(0, ((inputArr.indexOf('/')))).join('')
             let secondNum = inputArr.slice(inputArr.indexOf('/')+1).join('')
             inputArr = [divide(+firstNum, +secondNum)];
+            lastAns = divide(+firstNum, +secondNum)
         } 
     } else {
-        display2.textContent = 'ERROR - enter a number first';
-        display1.textContent += 'Press clear';
+        display2.textContent = 'ERROR';
     }
 }
 
@@ -108,6 +115,9 @@ function clear(){
 }
 
 function del(){
+    if(display1.textContent === 'ANS'){
+        return
+    }
     display1.textContent = display1.textContent.slice(0, display1.textContent.length-1);
     let deleted = inputArr.pop();
     let regex1 = /[+|\-|*|\/]/g
@@ -122,6 +132,11 @@ function del(){
 }
 
 
+// function plusMinusToggle(){
+//     if()
+// }
+
+
 
 numButs.forEach((but) => {
     but.addEventListener('click', calculation);
@@ -134,11 +149,9 @@ opButs.forEach((but) => {
 decPointBut.addEventListener('click', calculation);
 
 
-equalsBut.addEventListener('click', equals);
-
 clearBut.addEventListener('click', clear);
 
-delBut.addEventListener('click', del);
+
 
 
 function add(a,b){
