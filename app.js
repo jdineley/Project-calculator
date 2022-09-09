@@ -1,3 +1,7 @@
+// Bugs 
+// 1. can't have two decimal points in one calc (2.2+4.4)
+// 2. likes 8*.2  dislikes .2*8  Problem with validate let regex = /\d+[+|\-|*|\/]\d+/;
+
 const display1 = document.querySelector(".display1");
 const display2 = document.querySelector(".display2");
 const numButs = document.querySelectorAll(".num");
@@ -7,74 +11,146 @@ const opButs = document.querySelectorAll(".op");
 const decPointBut = document.querySelector(".point");
 const delBut = document.querySelector(".del");
 
+const numberRegex = /\d/;
+const opRegex = /[+|\-|*|\/]/g;
+const decPointRegex = /\./g;
+const validArrayCalcRegex = /\d+[+|\-|*|\/]\d+/;
+
 
 let inputArr = [];
-let lastAns
 let calcStarted = false;
 
+function validate(regex, str){
+    return regex.test(str);
+}
+
+// There is repeated functionality throughout my program
+// I need to modularise the repeated operations into named functions and reuse them 
+
+function activatebuttons(button){
+    switch(button) {
+        case numButs:
+            button.forEach((but) => {
+                but.addEventListener('click', calculation)
+            });
+            break;
+        case equalsBut:
+            button.addEventListener('click', equals);
+            break;
+        case opButs:
+            button.forEach((but) => {
+                but.addEventListener('click', calculation);
+            });
+            break;
+        case decPointBut:
+            button.addEventListener('click', calculation);
+            break;
+        case clearBut:
+            button.addEventListener('click', clear);
+            break;
+        case delBut:
+            button.addEventListener('click', del);
+            break;
+    }
+}
+function deactivatebuttons(button){
+    switch(button) {
+        case numButs:
+            button.forEach((but) => {
+                but.removeEventListener('click', calculation)
+            });
+            break;
+        case equalsBut:
+            button.removeEventListener('click', equals);
+            break;
+        case opButs:
+            button.forEach((but) => {
+                but.removeEventListener('click', calculation);
+            });
+            break;
+        case decPointBut:
+            button.removeEventListener('click', calculation);
+            break;
+        case clearBut:
+            button.removeEventListener('click', clear);
+            break;
+        case delBut:
+            button.removeEventListener('click', del);
+            break;
+    }
+}
+
+
+
+
 function calculation(e) {
-    equalsBut.addEventListener('click', equals);
-    delBut.addEventListener('click', del);
+    activatebuttons(equalsBut);
+    activatebuttons(delBut);
     if(!calcStarted){
         button = e.target.textContent;
+        let regex3 = /\d/;
+        if(display1.textContent === 'ANS' && regex3.test(button) ) {
+            return
+        }
+        
         let clearButs = ["DEL", "C"];
         if(!clearButs.includes(button)) {
+            console.log('yosss')
             display1.textContent += button;
             // Quick way to check if a number button is pressed
-            if(+button) inputArr.push(+button);
-            else inputArr.push(button);
+            if(+button){
+                inputArr.push(+button);
+            } 
+            else {
+                inputArr.push(button);
+            }
             // Make operator buttons inactive after one is used
             let regex1 = /[+|\-|*|\/]/g
             let regex2 = /\./g
             let opMatch = display1.textContent.match(regex1);
             let pointMatch = display1.textContent.match(regex2);
             if (opMatch && opMatch.length === 1){
-                opButs.forEach((but) => {
-                    but.removeEventListener('click', calculation);
-                })
+               deactivatebuttons(opButs)
             }
             if (pointMatch && pointMatch.length === 1){
-                decPointBut.removeEventListener('click', calculation);
+               deactivatebuttons(decPointBut);
             }
         }
     } else {
         // after equals, operate on ANS or write new number and start again
         button = e.target.textContent;
-        let regex1 = /\d/;
-        let regex2 = /[+|\-|*|\/]/g;
-        let regex3 = /\./g
-        if(regex1.test(button)){
+        // let regex1 = /\d/;
+        // let regex2 = /[+|\-|*|\/]/g;
+        // let regex3 = /\./g
+        if(validate(numberRegex, button)){
             inputArr = [button]
             display1.textContent = button;
             display2.textContent = '';
             calcStarted = false;
-        } else if(regex2.test(button)){
-            opButs.forEach((but) => {
-                but.removeEventListener('click', calculation);
-            })
+        } else if(validate(opRegex, button)){
+           deactivatebuttons(opButs)
             inputArr.push(button);
             display1.textContent = `ANS${button}`;
             calcStarted = false;
-        } else if(regex3.test(button)) {
-            decPointBut.removeEventListener('click', calculation); 
         }
+        //  else if(validate(decPointRegex, button)) {
+        //    deactivatebuttons(decPointBut); 
+        // }
     }
 }
 
 function equals(e) {
-    equalsBut.removeEventListener('click', equals);
-    delBut.removeEventListener('click', del);
-    numButs.forEach((but) => {
-        but.addEventListener('click', calculation);
-    })
-    opButs.forEach((but) => {
-        but.addEventListener('click', calculation);
-    })
-    decPointBut.addEventListener('click', calculation);
+   deactivatebuttons(equalsBut);
+   deactivatebuttons(delBut);
+   activatebuttons(numButs);
+   activatebuttons(opButs);
+   activatebuttons(decPointBut);
     calcStarted = true;
     let inputStr = inputArr.join('');
+    console.log(inputStr)
     let regex = /\d+[+|\-|*|\/]\d+/;
     let valid = regex.test(inputStr);
+    console.log(valid)
     if(valid){
         if(inputArr.includes('+')){
             let firstNum = inputArr.slice(0, ((inputArr.indexOf('+')))).join('')
@@ -104,12 +180,10 @@ function equals(e) {
 
 function clear(){
     inputArr = [];
-    numButs.forEach((but) => {
-        but.addEventListener('click', calculation);
-    });
-    opButs.forEach((but) => {
-        but.addEventListener('click', calculation);
-    });
+    activatebuttons(numButs);
+    activatebuttons(opButs);
+    activatebuttons(decPointBut);
+    activatebuttons(clearBut);
     display2.textContent = '';
     display1.textContent = '';
 }
@@ -120,14 +194,11 @@ function del(){
     }
     display1.textContent = display1.textContent.slice(0, display1.textContent.length-1);
     let deleted = inputArr.pop();
-    let regex1 = /[+|\-|*|\/]/g
-    let regex2 = /\./g
-    if(regex1.test(deleted)) {
-        opButs.forEach((but) => {
-            but.addEventListener('click', calculation);
-        })
-    } else if(regex2.test(deleted)){
-        decPointBut.addEventListener('click', calculation);
+
+    if(validate(opRegex, deleted)) {
+       activatebuttons(opButs);
+    } else if(validate(decPointRegex, deleted)){
+       activatebuttons(decPointBut);
     }
 }
 
@@ -138,18 +209,22 @@ function del(){
 
 
 
-numButs.forEach((but) => {
-    but.addEventListener('click', calculation);
-})
+// numButs.forEach((but) => {
+//     but.addEventListener('click', calculation);
+// })
+activatebuttons(numButs);
+activatebuttons(opButs);
+activatebuttons(decPointBut);
+activatebuttons(clearBut);
 
-opButs.forEach((but) => {
-    but.addEventListener('click', calculation);
-})
+// opButs.forEach((but) => {
+//     but.addEventListener('click', calculation);
+// })
 
-decPointBut.addEventListener('click', calculation);
+// decPointBut.addEventListener('click', calculation);
 
 
-clearBut.addEventListener('click', clear);
+// clearBut.addEventListener('click', clear);
 
 
 
