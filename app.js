@@ -4,12 +4,15 @@ const numButs = document.querySelectorAll(".num");
 const equalsBut = document.querySelector(".equals");
 const clearBut = document.querySelector(".clear");
 const opButs = document.querySelectorAll(".op");
+const decPointBut = document.querySelector(".point");
+const delBut = document.querySelector(".del");
 
 let inputArr = [];
 let calcStarted = false;
 let button;
 
 function calculation(e) {
+    
     if(!calcStarted){
         button = e.target.textContent;
         let clearButs = ["DEL", "C"];
@@ -20,11 +23,16 @@ function calculation(e) {
             else inputArr.push(button);
             // Make operator buttons inactive after one is used
             let regex1 = /[+|\-|*|\/]/g
-            let match = display1.textContent.match(regex1);
-            if (match && match.length === 1){
+            let regex2 = /\./g
+            let opMatch = display1.textContent.match(regex1);
+            let pointMatch = display1.textContent.match(regex2);
+            if (opMatch && opMatch.length === 1){
                 opButs.forEach((but) => {
                     but.removeEventListener('click', calculation);
                 })
+            }
+            if (pointMatch && pointMatch.length === 1){
+                decPointBut.removeEventListener('click', calculation);
             }
         }
     } else {
@@ -32,6 +40,7 @@ function calculation(e) {
         button = e.target.textContent;
         let regex1 = /\d/;
         let regex2 = /[+|\-|*|\/]/g;
+        let regex3 = /\./g
         if(regex1.test(button)){
             inputArr = [button]
             display1.textContent = button;
@@ -44,6 +53,8 @@ function calculation(e) {
             inputArr.push(button);
             display1.textContent = `ANS ${button}`;
             calcStarted = false;
+        } else if(regex3.test(button)) {
+            decPointBut.removeEventListener('click', calculation); 
         }
     }
 }
@@ -55,6 +66,7 @@ function equals(e) {
     opButs.forEach((but) => {
         but.addEventListener('click', calculation);
     })
+    decPointBut.addEventListener('click', calculation);
     calcStarted = true;
     let inputStr = inputArr.join('');
     let regex = /\d+[+|\-|*|\/]\d+/;
@@ -95,6 +107,20 @@ function clear(){
     display1.textContent = '';
 }
 
+function del(){
+    display1.textContent = display1.textContent.slice(0, display1.textContent.length-1);
+    let deleted = inputArr.pop();
+    let regex1 = /[+|\-|*|\/]/g
+    let regex2 = /\./g
+    if(regex1.test(deleted)) {
+        opButs.forEach((but) => {
+            but.addEventListener('click', calculation);
+        })
+    } else if(regex2.test(deleted)){
+        decPointBut.addEventListener('click', calculation);
+    }
+}
+
 
 
 numButs.forEach((but) => {
@@ -105,9 +131,15 @@ opButs.forEach((but) => {
     but.addEventListener('click', calculation);
 })
 
+decPointBut.addEventListener('click', calculation);
+
+
 equalsBut.addEventListener('click', equals);
 
-clearBut.addEventListener('click', clear)
+clearBut.addEventListener('click', clear);
+
+delBut.addEventListener('click', del);
+
 
 function add(a,b){
     display2.textContent = a + b;
