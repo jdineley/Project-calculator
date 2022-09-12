@@ -10,6 +10,9 @@
 // log which operator was removed
 // use arr.reduce on the remaining array to return the result: return acc * curVal
 
+// I need some return regex/conditions
+
+
 
 // General Calculator functionality:
 // Display1 = top section highlighting the current calculation (LH aligned), which is stored in variable inputStr
@@ -63,6 +66,48 @@ let button;
 
 function validate(regex, str){
     return regex.test(str);
+}
+
+function filterOpenClose(str){
+
+    // 2
+    let reg1 = /^\d+$/
+    // 2.
+    let reg2 = /^\d+\.$/
+    // 2.1
+    let reg3 = /^\d+\.\d+$/
+    // 2.1+
+    let reg4 = /^\d+\.\d+[+\-*\/]$/
+    // 2.1+3
+    let reg5 = /^\d+\.\d+[+\-*\/]\d+$/
+    // 2.1+3.
+    let reg6 = /^\d+\.\d+[+\-*\/]\d+\.$/
+    // 2.1+3.5
+    let reg7 = /^\d+\.\d+[+\-*\/]\d+\.\d+$/
+
+    if(str = ''){
+        activatebuttons(numButs);
+    } else if(str.match(reg1)){
+        activatebuttons(decPointBut);
+        activatebuttons(delBut);
+        activatebuttons(opButs);
+    } else if(str.match(reg2)){
+        activatebuttons(numButs);
+        activatebuttons(decPointBut);
+        activatebuttons(delBut);
+        activatebuttons(opButs);
+    } else if(str.match(reg3)){
+        
+    } else if(str.match(reg4)){
+
+    } else if(str.match(reg5)){
+
+    } else if(str.match(reg6)){
+
+    } else if(str.match(reg7)){
+
+    }
+
 }
 
 function activatebuttons(button){
@@ -130,7 +175,7 @@ function calculation(e) {
         button = e.target.textContent;
         let regex3 = /\d/;
         let regex4 = /\./;
-        if(display1.textContent === 'ANS' && regex3.test(button)) {
+        if(display1.textContent === 'ANS' && (regex3.test(button) || regex4.test(button))) {
             return
         }
         
@@ -151,20 +196,53 @@ function calculation(e) {
             let opMatch = display1.textContent.match(regex1);
             let pointMatch = display1.textContent.match(regex2);
             let combMatch = display1.textContent.match(regex3);
-            console.log(display1.textContent.split(regex3));
-            if (opMatch && opMatch.length === 1){
-               deactivatebuttons(opButs)
+            // console.log(display1.textContent.split(regex3));
+            console.log(opMatch)
+            // ANS-5.7  YES
+            // ANS-.    NO
+            if(display1.textContent.split(regex3).includes('ANS')){
+                if(opMatch && opMatch.length === 1){
+                    deactivatebuttons(opButs);
+                }
+                if(pointMatch && pointMatch.length === 1){
+                    deactivatebuttons(decPointBut);
+                }
+                if(combMatch && combMatch.length){}
+            } else {
+                if(pointMatch && pointMatch.length >= 1){
+                    deactivatebuttons(decPointBut);
+                    if(combMatch && combMatch.length >= 2){
+                        activatebuttons(decPointBut);
+                    }
+                }
+                if(opMatch && opMatch.length >= 1){
+                    deactivatebuttons(opButs);
+                }
             }
-            if (pointMatch && pointMatch.length === 1){
 
-               deactivatebuttons(decPointBut);
-            }
-            if (combMatch && combMatch.length === 2 && !(display1.textContent.split(regex3).includes('ANS')) ){
-                activatebuttons(decPointBut);
-            }
-            if (combMatch && combMatch.length === 3){
-                deactivatebuttons(decPointBut);
-            }
+            // if (pointMatch && pointMatch.length >= 1){
+            //     deactivatebuttons(decPointBut);
+            // }
+            
+            // if (combMatch && combMatch.length === 2){
+            //     deactivatebuttons(opButs);
+            //     if(!(display1.textContent.split(regex3).includes('ANS'))){
+            //         activatebuttons(decPointBut);
+            //     }
+            // }
+
+            
+            // ANS-5.7
+
+            // if (opMatch && opMatch.length === 1){
+            //     deactivatebuttons(opButs)
+            // }
+            // if (combMatch && combMatch.length === 2 && !(display1.textContent.split(regex3).includes('ANS')) ){
+            //     activatebuttons(decPointBut);
+            // }
+            // if (combMatch && combMatch.length === 3){
+            //     deactivatebuttons(decPointBut);
+            // }
             // if (combMatch && combMatch[combMatch.length-1] === '.'){
             //     deactivatebuttons(decPointBut);
             // }
@@ -197,8 +275,10 @@ function equals(e) {
    deactivatebuttons(decPointBut);
     calcStarted = true;
     let inputStr = inputArr.join('');
-    let regex = /\d+[+|\-|*|\/]\d+/;
+    console.log(inputStr)
+    let regex = /[\d\.]+[+\-*\/][\d\.]+/;
     let valid = regex.test(inputStr);
+    console.log(valid)
     if(valid){
         if(inputArr.includes('+')){
             let firstNum = inputArr.slice(0, ((inputArr.indexOf('+')))).join('')
@@ -252,9 +332,9 @@ function del(){
 
 
 activatebuttons(numButs);
-activatebuttons(opButs);
-activatebuttons(decPointBut);
-activatebuttons(clearBut);
+// activatebuttons(opButs);
+// activatebuttons(decPointBut);
+// activatebuttons(clearBut);
 
 
 
