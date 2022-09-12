@@ -69,7 +69,9 @@ function validate(regex, str){
 }
 
 function filterOpenClose(str){
-
+    console.log('filter start')
+    deactivatebuttons()
+    
     // 2
     let reg1 = /^\d+$/
     // 2.
@@ -77,37 +79,70 @@ function filterOpenClose(str){
     // 2.1
     let reg3 = /^\d+\.\d+$/
     // 2.1+
-    let reg4 = /^\d+\.\d+[+\-*\/]$/
+    let reg4 = /^\d+\.?\d*[+\-*\/]$/
     // 2.1+3
     let reg5 = /^\d+\.\d+[+\-*\/]\d+$/
     // 2.1+3.
     let reg6 = /^\d+\.\d+[+\-*\/]\d+\.$/
     // 2.1+3.5
-    let reg7 = /^\d+\.\d+[+\-*\/]\d+\.\d+$/
-
-    if(str = ''){
+    let reg7 = /^\d+\.?\d*[+\-*\/]\d+\.?\d*$/
+    console.log(str,str.match(reg7))
+// ''
+    if(str === ''){
+        console.log('""')
         activatebuttons(numButs);
+        // activatebuttons(decPointBut);
+        // activatebuttons(delBut);
+        // activatebuttons(opButs);
+// 2
     } else if(str.match(reg1)){
+        console.log('reg1')
+        activatebuttons(numButs);
         activatebuttons(decPointBut);
         activatebuttons(delBut);
         activatebuttons(opButs);
+// 2.
     } else if(str.match(reg2)){
         activatebuttons(numButs);
+        // activatebuttons(decPointBut);
+        activatebuttons(delBut);
+        activatebuttons(opButs);
+// 2.1
+    } else if(str.match(reg3)){
+        activatebuttons(numButs);
+        // activatebuttons(decPointBut);
+        activatebuttons(delBut);
+        activatebuttons(opButs);
+// 2.1+
+    } else if(str.match(reg4)){
+        activatebuttons(numButs);
+        // activatebuttons(decPointBut);
+        activatebuttons(delBut);
+        // activatebuttons(opButs);
+// 2.1+3
+    } else if(str.match(reg5)){
+        activatebuttons(numButs);
         activatebuttons(decPointBut);
         activatebuttons(delBut);
         activatebuttons(opButs);
-    } else if(str.match(reg3)){
-        
-    } else if(str.match(reg4)){
-
-    } else if(str.match(reg5)){
-
+// 2.1+3.
     } else if(str.match(reg6)){
-
+        activatebuttons(numButs);
+        // activatebuttons(decPointBut);
+        activatebuttons(delBut);
+        // activatebuttons(opButs);
+// 2.1+3.5
     } else if(str.match(reg7)){
-
+        console.log('reg7')
+        activatebuttons(numButs);
+        // activatebuttons(decPointBut);
+        activatebuttons(delBut);
+        // activatebuttons(opButs);
     }
-
+    if(str.match(/[\d\.]+[+\-*\/][\d\.]+/)){
+        activatebuttons(equalsBut);
+    }
+console.log('filter end')
 }
 
 function activatebuttons(button){
@@ -136,52 +171,61 @@ function activatebuttons(button){
             break;
     }
 }
-function deactivatebuttons(button){
-    switch(button) {
-        case numButs:
-            button.forEach((but) => {
+function deactivatebuttons(){
+    console.log('deactive start')
+    // switch(button) {
+    //     case numButs:
+            numButs.forEach((but) => {
                 but.removeEventListener('click', calculation)
             });
-            break;
-        case equalsBut:
-            button.removeEventListener('click', equals);
-            break;
-        case opButs:
-            button.forEach((but) => {
+    //         // break;
+    //     case equalsBut:
+            equalsBut.removeEventListener('click', equals);
+    //         // break;
+    //     case opButs:
+            opButs.forEach((but) => {
                 but.removeEventListener('click', calculation);
             });
-            break;
-        case decPointBut:
-            button.removeEventListener('click', calculation);
-            break;
-        case clearBut:
-            button.removeEventListener('click', clear);
-            break;
-        case delBut:
-            button.removeEventListener('click', del);
-            break;
-    }
+    //         // break;
+    //     case decPointBut:
+            decPointBut.removeEventListener('click', calculation);
+    //         // break;
+    //     case clearBut:
+            clearBut.removeEventListener('click', clear);
+    //         // break;
+    //     case delBut:
+            delBut.removeEventListener('click', del);
+    //         break;
+    // }
+
 }
 
 
 
 
+
 function calculation(e) {
-    console.log(e.target.textContent, calcStarted)
-    activatebuttons(equalsBut);
-    activatebuttons(delBut);
-    activatebuttons(decPointBut);
+    
+    
     if(!calcStarted){
         button = e.target.textContent;
-        let regex3 = /\d/;
-        let regex4 = /\./;
-        if(display1.textContent === 'ANS' && (regex3.test(button) || regex4.test(button))) {
-            return
-        }
+        // let regex3 = /\d/;
+        // let regex4 = /\./;
+        // if(display1.textContent === 'ANS' && (regex3.test(button) || regex4.test(button))) {
+        //     return
+        // }
         
         let clearButs = ["DEL", "C"];
         if(!clearButs.includes(button)) {
+            let newText = display1.textContent + button;
+            console.log(/^\d+\.?\d*[+\-*\/]?\d*\.?\d*$/.test(newText), newText)
+            if(!/^\d+\.?\d*[+\-*\/]?\d*\.?\d*$/.test(newText)){
+                console.log('invalid')
+                return
+            }
             display1.textContent += button;
+            // console.log(display1.textContent)
+            // filterOpenClose(display1.textContent);
             // Quick way to check if a number button is pressed
             if(+button){
                 inputArr.push(+button);
@@ -190,35 +234,35 @@ function calculation(e) {
                 inputArr.push(button);
             }
             // Make operator buttons inactive after one is used
-            let regex1 = /[\+\-\*\/]/g
-            let regex2 = /\./g
-            let regex3 = /[\+\-\*\/\.]/g
-            let opMatch = display1.textContent.match(regex1);
-            let pointMatch = display1.textContent.match(regex2);
-            let combMatch = display1.textContent.match(regex3);
-            // console.log(display1.textContent.split(regex3));
-            console.log(opMatch)
-            // ANS-5.7  YES
-            // ANS-.    NO
-            if(display1.textContent.split(regex3).includes('ANS')){
-                if(opMatch && opMatch.length === 1){
-                    deactivatebuttons(opButs);
-                }
-                if(pointMatch && pointMatch.length === 1){
-                    deactivatebuttons(decPointBut);
-                }
-                if(combMatch && combMatch.length){}
-            } else {
-                if(pointMatch && pointMatch.length >= 1){
-                    deactivatebuttons(decPointBut);
-                    if(combMatch && combMatch.length >= 2){
-                        activatebuttons(decPointBut);
-                    }
-                }
-                if(opMatch && opMatch.length >= 1){
-                    deactivatebuttons(opButs);
-                }
-            }
+            // let regex1 = /[\+\-\*\/]/g
+            // let regex2 = /\./g
+            // let regex3 = /[\+\-\*\/\.]/g
+            // let opMatch = display1.textContent.match(regex1);
+            // let pointMatch = display1.textContent.match(regex2);
+            // let combMatch = display1.textContent.match(regex3);
+            // // console.log(display1.textContent.split(regex3));
+            // console.log(opMatch)
+            // // ANS-5.7  YES
+            // // ANS-.    NO
+            // if(display1.textContent.split(regex3).includes('ANS')){
+            //     if(opMatch && opMatch.length === 1){
+            //         deactivatebuttons(opButs);
+            //     }
+            //     if(pointMatch && pointMatch.length === 1){
+            //         deactivatebuttons(decPointBut);
+            //     }
+            //     if(combMatch && combMatch.length){}
+            // } else {
+            //     if(pointMatch && pointMatch.length >= 1){
+            //         deactivatebuttons(decPointBut);
+            //         if(combMatch && combMatch.length >= 2){
+            //             activatebuttons(decPointBut);
+            //         }
+            //     }
+            //     if(opMatch && opMatch.length >= 1){
+            //         deactivatebuttons(opButs);
+            //     }
+            // }
 
             // if (pointMatch && pointMatch.length >= 1){
             //     deactivatebuttons(decPointBut);
@@ -332,9 +376,10 @@ function del(){
 
 
 activatebuttons(numButs);
-// activatebuttons(opButs);
-// activatebuttons(decPointBut);
-// activatebuttons(clearBut);
+activatebuttons(opButs);
+activatebuttons(decPointBut);
+activatebuttons(clearBut);
+activatebuttons(equalsBut)
 
 
 
