@@ -1,5 +1,7 @@
-//Bugs
-// 1. Round the answer to 2dp
+// current validation function allows:
+// 1.  1.+
+// 2.  5.1+.
+// Look at this https://www.rexegg.com/regex-disambiguation.html#lookarounds
 
 const display1 = document.querySelector(".display1");
 const display2 = document.querySelector(".display2");
@@ -12,8 +14,6 @@ const delBut = document.querySelector(".del");
 
 const numberRegex = /\d/;
 const opRegex = /[\+\-\*\/]/;
-const decPointRegex = /\./g;
-const validArrayCalcRegex = /\d+[+|\-|*|\/]\d+/;
 
 
 let inputArr = [];
@@ -29,22 +29,22 @@ activatebuttons(delBut)
 
 
 function add(a,b){
-    display2.textContent = a + b;
+    display2.textContent = Math.round((a + b)*10000)/10000;
     return a + b;
 }
 
 function subtract(a,b){
-    display2.textContent = a - b;
+    display2.textContent = Math.round((a - b)*10000)/10000;
     return a-b;
 }
 
 function multiply(a,b){
-    display2.textContent = a * b;
+    display2.textContent = Math.round((a * b)*10000)/10000;
     return a*b;
 }
 
 function divide(a,b){
-    display2.textContent = a / b;
+    display2.textContent = Math.round((a / b)*10000)/10000;
     return a/b;
 }
 
@@ -80,55 +80,47 @@ function activatebuttons(button){
     }
 }
 
+// Inline validation checks for each input character and filters away no valid entries
 function inLineValidation(e){
-    button = e.target.textContent;
-            
+    button = e.target.textContent;       
     display1.textContent += button;
-    
-
-let clearButs = ["DEL", "C"];
-if(!clearButs.includes(button)) {
-    if(/ANS/.test(display1.textContent)){
-        if(!/^ANS[+\-*\/]\d*\.?\d*$/.test(display1.textContent)){
-            console.log('invalid')
-            display1.textContent = display1.textContent.slice(0, display1.textContent.length-1)
-            console.log('z')
-            return true
+    let clearButs = ["DEL", "C"];
+    if(!clearButs.includes(button)) {
+        if(/ANS/.test(display1.textContent)){
+            if(!/^ANS[+\-*\/]\d+\.?\d*$/.test(display1.textContent)){
+                console.log('invalid')
+                display1.textContent = display1.textContent.slice(0, display1.textContent.length-1)
+                console.log('z')
+                return false
+            }
+        } else if(/[+\-*\/]/.test(display1.textContent)){
+            if(!/^\d+\.?\d*[+\-*\/]?\d*\.?\d*$/.test(display1.textContent)){
+                console.log('invalid')
+                display1.textContent = display1.textContent.slice(0, display1.textContent.length-1)
+                console.log('x')
+                return false
+            }
+        } else {
+            if(!/^\d+\.?\d*$/.test(display1.textContent)){
+                console.log('invalid')
+                display1.textContent = display1.textContent.slice(0, display1.textContent.length-1)
+                console.log('c')
+                return false
+            } 
         }
-    } else if(/[+\-*\/]/.test(display1.textContent)){
-        if(!/^\d+\.?\d*[+\-*\/]?\d*\.?\d*$/.test(display1.textContent)){
-            console.log('invalid')
-            display1.textContent = display1.textContent.slice(0, display1.textContent.length-1)
-            console.log('x')
-            return true
-        }
-    } else {
-        if(!/^\d+\.?\d*$/.test(display1.textContent)){
-            console.log('invalid')
-            display1.textContent = display1.textContent.slice(0, display1.textContent.length-1)
-            console.log('c')
-            return true
-        } 
     }
-
-
-}
 }
 
 function calculation(e) {
-
-    
     if(!calcStarted){
-        
-        if(inLineValidation(e)) return
-
+        // run inline validation to only allow a valid calculation to be written one character at a time
+        if(inLineValidation(e) === false) return
         if(+button){
             inputArr.push(+button);
         }  
         else {
             inputArr.push(button);
         }
-
     } else {
         // after equals, operate on ANS or write new number and start again
         button = e.target.textContent;
@@ -141,7 +133,6 @@ function calculation(e) {
             inputArr.push(button);
             display1.textContent = `ANS${button}`;
             calcStarted = false;
-            // calculation();
         }
     }
 }
@@ -149,7 +140,7 @@ function calculation(e) {
 function equals(e) {
     calcStarted = true;
     let inputStr = inputArr.join('');
-    let regex = /[\d\.]+[+\-*\/][\d\.]+/;
+    let regex = /^\d+\.?\d*[+\-*\/]\d*\.?\d+$/;
     let valid = regex.test(inputStr);
     if(valid){
         if(inputArr.includes('+')){
@@ -174,7 +165,9 @@ function equals(e) {
             lastAns = divide(+firstNum, +secondNum)
         } 
     } else {
-        display2.textContent = 'ERROR';
+        // Supress equals untill a valid complete calculation is defined
+        calcStarted = false;
+        return
     }
 }
 
@@ -185,12 +178,11 @@ function clear(){
 }
 
 function del(){
-    if(display1.textContent === 'ANS'){
+    if(display1.textContent === 'ANS' || calcStarted === true){
         return
     }
     display1.textContent = display1.textContent.slice(0, display1.textContent.length-1);
     let deleted = inputArr.pop();
-
 }
 
 
