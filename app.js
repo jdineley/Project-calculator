@@ -68,82 +68,6 @@ function validate(regex, str){
     return regex.test(str);
 }
 
-function filterOpenClose(str){
-    console.log('filter start')
-    deactivatebuttons()
-    
-    // 2
-    let reg1 = /^\d+$/
-    // 2.
-    let reg2 = /^\d+\.$/
-    // 2.1
-    let reg3 = /^\d+\.\d+$/
-    // 2.1+
-    let reg4 = /^\d+\.?\d*[+\-*\/]$/
-    // 2.1+3
-    let reg5 = /^\d+\.\d+[+\-*\/]\d+$/
-    // 2.1+3.
-    let reg6 = /^\d+\.\d+[+\-*\/]\d+\.$/
-    // 2.1+3.5
-    let reg7 = /^\d+\.?\d*[+\-*\/]\d+\.?\d*$/
-    console.log(str,str.match(reg7))
-// ''
-    if(str === ''){
-        console.log('""')
-        activatebuttons(numButs);
-        // activatebuttons(decPointBut);
-        // activatebuttons(delBut);
-        // activatebuttons(opButs);
-// 2
-    } else if(str.match(reg1)){
-        console.log('reg1')
-        activatebuttons(numButs);
-        activatebuttons(decPointBut);
-        activatebuttons(delBut);
-        activatebuttons(opButs);
-// 2.
-    } else if(str.match(reg2)){
-        activatebuttons(numButs);
-        // activatebuttons(decPointBut);
-        activatebuttons(delBut);
-        activatebuttons(opButs);
-// 2.1
-    } else if(str.match(reg3)){
-        activatebuttons(numButs);
-        // activatebuttons(decPointBut);
-        activatebuttons(delBut);
-        activatebuttons(opButs);
-// 2.1+
-    } else if(str.match(reg4)){
-        activatebuttons(numButs);
-        // activatebuttons(decPointBut);
-        activatebuttons(delBut);
-        // activatebuttons(opButs);
-// 2.1+3
-    } else if(str.match(reg5)){
-        activatebuttons(numButs);
-        activatebuttons(decPointBut);
-        activatebuttons(delBut);
-        activatebuttons(opButs);
-// 2.1+3.
-    } else if(str.match(reg6)){
-        activatebuttons(numButs);
-        // activatebuttons(decPointBut);
-        activatebuttons(delBut);
-        // activatebuttons(opButs);
-// 2.1+3.5
-    } else if(str.match(reg7)){
-        console.log('reg7')
-        activatebuttons(numButs);
-        // activatebuttons(decPointBut);
-        activatebuttons(delBut);
-        // activatebuttons(opButs);
-    }
-    if(str.match(/[\d\.]+[+\-*\/][\d\.]+/)){
-        activatebuttons(equalsBut);
-    }
-console.log('filter end')
-}
 
 function activatebuttons(button){
     switch(button) {
@@ -171,61 +95,47 @@ function activatebuttons(button){
             break;
     }
 }
-function deactivatebuttons(){
-    console.log('deactive start')
-    // switch(button) {
-    //     case numButs:
-            numButs.forEach((but) => {
-                but.removeEventListener('click', calculation)
-            });
-    //         // break;
-    //     case equalsBut:
-            equalsBut.removeEventListener('click', equals);
-    //         // break;
-    //     case opButs:
-            opButs.forEach((but) => {
-                but.removeEventListener('click', calculation);
-            });
-    //         // break;
-    //     case decPointBut:
-            decPointBut.removeEventListener('click', calculation);
-    //         // break;
-    //     case clearBut:
-            clearBut.removeEventListener('click', clear);
-    //         // break;
-    //     case delBut:
-            delBut.removeEventListener('click', del);
-    //         break;
-    // }
 
-}
 
 
 
 
 
 function calculation(e) {
-    
+
     
     if(!calcStarted){
-        button = e.target.textContent;
-        // let regex3 = /\d/;
-        // let regex4 = /\./;
-        // if(display1.textContent === 'ANS' && (regex3.test(button) || regex4.test(button))) {
-        //     return
-        // }
+
+            button = e.target.textContent;
+            
+            display1.textContent += button;
+            console.log(/^ANS[+\-*\/]\d*\.?\d*$/.test(display1.textContent))
         
         let clearButs = ["DEL", "C"];
         if(!clearButs.includes(button)) {
-            let newText = display1.textContent + button;
-            console.log(/^\d+\.?\d*[+\-*\/]?\d*\.?\d*$/.test(newText), newText)
-            if(!/^\d+\.?\d*[+\-*\/]?\d*\.?\d*$/.test(newText)){
-                console.log('invalid')
-                return
+            // let newText = display1.textContent + button;
+            // console.log(display1.textContent, /ANS/.test(display1.textContent));
+            if(/ANS/.test(display1.textContent)){
+                if(!/^ANS[+\-*\/]\d*\.?\d*$/.test(display1.textContent)){
+                    console.log('invalid')
+                    display1.textContent = display1.textContent.slice(0, display1.textContent.length-1)
+                    return
+                }
+            } else if(/[+\-*\/]/.test(display1.textContent)){
+                if(!/^\d+\.?\d*[+\-*\/]?\d*\.?\d*$/.test(display1.textContent)){
+                    console.log('invalid')
+                    display1.textContent = display1.textContent.slice(0, display1.textContent.length-1)
+                    return
+                }
+            } else {
+                if(!/^\d+\.?\d*$/.test(display1.textContent)){
+                    console.log('invalid')
+                    display1.textContent = display1.textContent.slice(0, display1.textContent.length-1)
+                    return
+                } 
             }
-            display1.textContent += button;
-            // console.log(display1.textContent)
-            // filterOpenClose(display1.textContent);
+
+            // display1.textContent += button;
             // Quick way to check if a number button is pressed
             if(+button){
                 inputArr.push(+button);
@@ -233,63 +143,7 @@ function calculation(e) {
             else {
                 inputArr.push(button);
             }
-            // Make operator buttons inactive after one is used
-            // let regex1 = /[\+\-\*\/]/g
-            // let regex2 = /\./g
-            // let regex3 = /[\+\-\*\/\.]/g
-            // let opMatch = display1.textContent.match(regex1);
-            // let pointMatch = display1.textContent.match(regex2);
-            // let combMatch = display1.textContent.match(regex3);
-            // // console.log(display1.textContent.split(regex3));
-            // console.log(opMatch)
-            // // ANS-5.7  YES
-            // // ANS-.    NO
-            // if(display1.textContent.split(regex3).includes('ANS')){
-            //     if(opMatch && opMatch.length === 1){
-            //         deactivatebuttons(opButs);
-            //     }
-            //     if(pointMatch && pointMatch.length === 1){
-            //         deactivatebuttons(decPointBut);
-            //     }
-            //     if(combMatch && combMatch.length){}
-            // } else {
-            //     if(pointMatch && pointMatch.length >= 1){
-            //         deactivatebuttons(decPointBut);
-            //         if(combMatch && combMatch.length >= 2){
-            //             activatebuttons(decPointBut);
-            //         }
-            //     }
-            //     if(opMatch && opMatch.length >= 1){
-            //         deactivatebuttons(opButs);
-            //     }
-            // }
 
-            // if (pointMatch && pointMatch.length >= 1){
-            //     deactivatebuttons(decPointBut);
-            // }
-            
-            // if (combMatch && combMatch.length === 2){
-            //     deactivatebuttons(opButs);
-            //     if(!(display1.textContent.split(regex3).includes('ANS'))){
-            //         activatebuttons(decPointBut);
-            //     }
-            // }
-
-            
-            // ANS-5.7
-
-            // if (opMatch && opMatch.length === 1){
-            //     deactivatebuttons(opButs)
-            // }
-            // if (combMatch && combMatch.length === 2 && !(display1.textContent.split(regex3).includes('ANS')) ){
-            //     activatebuttons(decPointBut);
-            // }
-            // if (combMatch && combMatch.length === 3){
-            //     deactivatebuttons(decPointBut);
-            // }
-            // if (combMatch && combMatch[combMatch.length-1] === '.'){
-            //     deactivatebuttons(decPointBut);
-            // }
         }
     } else {
         // after equals, operate on ANS or write new number and start again
@@ -300,29 +154,26 @@ function calculation(e) {
             display2.textContent = '';
             calcStarted = false;
         } else if(validate(opRegex, button)){
-           deactivatebuttons(opButs)
             inputArr.push(button);
             display1.textContent = `ANS${button}`;
             calcStarted = false;
+            // calculation();
         }
-        //  else if(validate(decPointRegex, button)) {
-        //    deactivatebuttons(decPointBut); 
-        // }
     }
 }
 
 function equals(e) {
-   deactivatebuttons(equalsBut);
-   deactivatebuttons(delBut);
-   activatebuttons(numButs);
-   activatebuttons(opButs);
-   deactivatebuttons(decPointBut);
+//    deactivatebuttons(equalsBut);
+//    deactivatebuttons(delBut);
+//    activatebuttons(numButs);
+//    activatebuttons(opButs);
+//    deactivatebuttons(decPointBut);
     calcStarted = true;
     let inputStr = inputArr.join('');
-    console.log(inputStr)
+    // console.log(inputStr)
     let regex = /[\d\.]+[+\-*\/][\d\.]+/;
     let valid = regex.test(inputStr);
-    console.log(valid)
+    // console.log(valid)
     if(valid){
         if(inputArr.includes('+')){
             let firstNum = inputArr.slice(0, ((inputArr.indexOf('+')))).join('')
@@ -367,11 +218,11 @@ function del(){
     display1.textContent = display1.textContent.slice(0, display1.textContent.length-1);
     let deleted = inputArr.pop();
 
-    if(validate(opRegex, deleted)) {
-       activatebuttons(opButs);
-    } else if(validate(decPointRegex, deleted)){
-       activatebuttons(decPointBut);
-    }
+    // if(validate(opRegex, deleted)) {
+    //    activatebuttons(opButs);
+    // } else if(validate(decPointRegex, deleted)){
+    //    activatebuttons(decPointBut);
+    // }
 }
 
 
@@ -380,7 +231,7 @@ activatebuttons(opButs);
 activatebuttons(decPointBut);
 activatebuttons(clearBut);
 activatebuttons(equalsBut)
-
+activatebuttons(delBut)
 
 
 function add(a,b){
