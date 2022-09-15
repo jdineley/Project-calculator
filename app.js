@@ -87,21 +87,14 @@ function inLineValidation(e){
     let clearButs = ["DEL", "C"];
     if(!clearButs.includes(button)) {
         if(/ANS/.test(display1.textContent)){
-            if(!/ANS[+\-*\/]\d*\.?\d*$/.test(display1.textContent)){
+            if(!/^ANS[+*/-](\d+(\.\d*)?)?$/.test(display1.textContent)){
                 console.log('invalid')
                 display1.textContent = display1.textContent.slice(0, display1.textContent.length-1)
                 console.log('z')
                 return false
             }
-        } else if(/[+\-*\/]/.test(display1.textContent)){
-            if(!/^\d+\.?\d*[+\-*\/]?\d*\.?\d*$/.test(display1.textContent)){
-                console.log('invalid')
-                display1.textContent = display1.textContent.slice(0, display1.textContent.length-1)
-                console.log('x')
-                return false
-            }
         } else {
-            if(!/^\d+\.?\d*$/.test(display1.textContent)){
+            if(!/^(\d+(\.\d*)?((?<=\d)[+*/-]))?(\d+(\.\d*)?)?$/.test(display1.textContent)){
                 console.log('invalid')
                 display1.textContent = display1.textContent.slice(0, display1.textContent.length-1)
                 console.log('c')
