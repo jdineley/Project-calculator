@@ -1,8 +1,3 @@
-// current validation function allows:
-// 1.  1.+
-// 2.  5.1+.
-// Look at this https://www.rexegg.com/regex-disambiguation.html#lookarounds
-
 const display1 = document.querySelector(".display1");
 const display2 = document.querySelector(".display2");
 const numButs = document.querySelectorAll(".num");
@@ -80,7 +75,7 @@ function activatebuttons(button){
     }
 }
 
-// Inline validation checks for each input character and filters away no valid entries
+// Inline validation checks for each input character and filters away non valid entries
 function inLineValidation(e){
     button = e.target.textContent;       
     display1.textContent += button;
@@ -90,14 +85,12 @@ function inLineValidation(e){
             if(!/^ANS[+*/-](\d+(\.\d*)?)?$/.test(display1.textContent)){
                 console.log('invalid')
                 display1.textContent = display1.textContent.slice(0, display1.textContent.length-1)
-                console.log('z')
                 return false
             }
         } else {
             if(!/^(\d+(\.\d*)?((?<=\d)[+*/-]))?(\d+(\.\d*)?)?$/.test(display1.textContent)){
                 console.log('invalid')
                 display1.textContent = display1.textContent.slice(0, display1.textContent.length-1)
-                console.log('c')
                 return false
             } 
         }

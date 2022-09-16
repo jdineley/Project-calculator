@@ -1,9 +1,12 @@
 * {
     box-sizing: border-box;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size:larger;
 }
 
-body {
-    height: 100vh;
+.container {
+    height: 80vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -11,47 +14,61 @@ body {
 }
 
 .calculator {
-    border: 10px solid black;
+    border: 2px solid black;
     width: 300px;
+    border-radius: 8px;
+    background-color:rgb(171, 167, 159);
 
 
+}
+
+.display {
+    border: 1px solid black;
+    margin: 5px;
+    background-color: rgb(195, 251, 233);
 }
 
 .display1 {
-    /* border: 1px solid black; */
     display: flex;
     align-items: center;
-    height: 25px;
+    height: 50px;
     padding-left: 10px;
-    /* border-bottom: 1px solid black; */
 }
 .display2 {
-    /* border: 1px solid black; */
     display: flex;
     align-items: center;
     justify-content: end;
-    height: 25px;
+    height: 50px;
     text-align: end;
     padding-right: 10px;
-    /* border-bottom: 1px solid black; */
 }
 
-.buttons {
+.first,.second,.third,.fourth,.fith{
     display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-
+    justify-content: space-around;
 }
+
+
 
 .num,.equals,.delete,.clear,.op,.point,.del {
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
     border: 1px solid black;
-    width: 25%;
-    aspect-ratio: 3/2;
+    margin: 5px;
+    height: 50px;
+    background-color: aliceblue;
+}
+
+.clear,.del {
+    background-color: rgb(227, 159, 136);
 }
 
 .num:active,.op:active,.clear:active,.point:active,.del:active{
     box-shadow: inset 0px 0px 5px #717070;
+}
+
+footer{
+    text-align: center;
 }
