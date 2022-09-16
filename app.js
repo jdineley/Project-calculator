@@ -152,7 +152,6 @@ function equals(e) {
         } 
     } else {
         // Supress equals untill a valid complete calculation is defined
-        calcStarted = false;
         return
     }
 }
