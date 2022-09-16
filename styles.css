@@ -65,7 +65,7 @@
     background-color: rgb(227, 159, 136);
 }
 
-.num:active,.op:active,.clear:active,.point:active,.del:active{
+.num:active,.op:active,.clear:active,.point:active,.del:active,.equals:active{
     box-shadow: inset 0px 0px 5px #717070;
 }
 

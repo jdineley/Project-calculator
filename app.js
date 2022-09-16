@@ -24,22 +24,26 @@ activatebuttons(delBut)
 
 
 function add(a,b){
-    display2.textContent = Math.round((a + b)*10000)/10000;
-    return a + b;
+    let newAns = (a + b).toPrecision(5);
+    display2.textContent = newAns;
+    return a+b;
 }
 
 function subtract(a,b){
-    display2.textContent = Math.round((a - b)*10000)/10000;
+    let newAns = (a - b).toPrecision(5);
+    display2.textContent = newAns;
     return a-b;
 }
 
 function multiply(a,b){
-    display2.textContent = Math.round((a * b)*10000)/10000;
+    let newAns = (a * b).toPrecision(5);
+    display2.textContent = newAns;
     return a*b;
 }
 
 function divide(a,b){
-    display2.textContent = Math.round((a / b)*10000)/10000;
+    let newAns = (a / b).toPrecision(5);
+    display2.textContent = newAns;
     return a/b;
 }
 
@@ -77,7 +81,8 @@ function activatebuttons(button){
 
 // Inline validation checks for each input character and filters away non valid entries
 function inLineValidation(e){
-    button = e.target.textContent;       
+    button = e.target.textContent;
+    if(display1.textContent.length === 11) return false
     display1.textContent += button;
     let clearButs = ["DEL", "C"];
     if(!clearButs.includes(button)) {
@@ -124,34 +129,32 @@ function calculation(e) {
 }
 
 function equals(e) {
-    calcStarted = true;
     let inputStr = inputArr.join('');
-    let regex = /^\d+\.?\d*[+\-*\/]\d*\.?\d+$/;
+    let regex = /\-?\d+\.?\d*e?\-?\+?\d*[+\-*\/]\d*\.?\d+$/;
     let valid = regex.test(inputStr);
+
     if(valid){
+        calcStarted = true;
         if(inputArr.includes('+')){
             let firstNum = inputArr.slice(0, ((inputArr.indexOf('+')))).join('')
             let secondNum = inputArr.slice(inputArr.indexOf('+')+1).join('')
             inputArr = [add(+firstNum, +secondNum)];
-            lastAns = add(+firstNum, +secondNum)
         } else if(inputArr.includes('-')){
             let firstNum = inputArr.slice(0, ((inputArr.indexOf('-')))).join('')
             let secondNum = inputArr.slice(inputArr.indexOf('-')+1).join('')
             inputArr = [subtract(+firstNum, +secondNum)];
-            lastAns = subtract(+firstNum, +secondNum)
         } else if(inputArr.includes('*')){
             let firstNum = inputArr.slice(0, ((inputArr.indexOf('*')))).join('')
             let secondNum = inputArr.slice(inputArr.indexOf('*')+1).join('')
             inputArr = [multiply(+firstNum, +secondNum)];
-            lastAns = multiply(+firstNum, +secondNum)
         }else {
             let firstNum = inputArr.slice(0, ((inputArr.indexOf('/')))).join('')
             let secondNum = inputArr.slice(inputArr.indexOf('/')+1).join('')
             inputArr = [divide(+firstNum, +secondNum)];
-            lastAns = divide(+firstNum, +secondNum)
         } 
     } else {
         // Supress equals untill a valid complete calculation is defined
+        console.log('invalid equals')
         return
     }
 }
