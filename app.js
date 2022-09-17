@@ -1,3 +1,7 @@
+window.addEventListener('touchstart', (e) => {
+    e.target.style. backgroundColor = 'red';
+})
+
 const display1 = document.querySelector(".display1");
 const display2 = document.querySelector(".display2");
 const numButs = document.querySelectorAll(".num");
