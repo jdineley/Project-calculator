@@ -24,25 +24,29 @@ activatebuttons(delBut)
 
 
 function add(a,b){
-    let newAns = (a + b).toPrecision(5);
+    let newAns = (a + b)
+    // .toPrecision(5);
     display2.textContent = newAns;
     return a+b;
 }
 
 function subtract(a,b){
-    let newAns = (a - b).toPrecision(5);
+    let newAns = (a - b)
+    // .toPrecision(5);
     display2.textContent = newAns;
     return a-b;
 }
 
 function multiply(a,b){
-    let newAns = (a * b).toPrecision(5);
+    let newAns = (a * b)
+    // .toPrecision(5);
     display2.textContent = newAns;
     return a*b;
 }
 
 function divide(a,b){
-    let newAns = (a / b).toPrecision(5);
+    let newAns = (a / b)
+    // .toPrecision(5);
     display2.textContent = newAns;
     return a/b;
 }
@@ -82,7 +86,7 @@ function activatebuttons(button){
 // Inline validation checks for each input character and filters away non valid entries
 function inLineValidation(e){
     button = e.target.textContent;
-    if(display1.textContent.length === 11) return false
+    // if(display1.textContent.length === 11) return false
     display1.textContent += button;
     let clearButs = ["DEL", "C"];
     if(!clearButs.includes(button)) {
