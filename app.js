@@ -61,6 +61,7 @@ function activatebuttons(button){
         case numButs:
             button.forEach((but) => {
                 but.addEventListener('click', calculation)
+                but.addEventListener('touchstart', calculation)
             });
             break;
         case equalsBut:
@@ -107,6 +108,7 @@ function inLineValidation(e){
 }
 
 function calculation(e) {
+    e.preventDefault();
     if(!calcStarted){
         // run inline validation to only allow a valid calculation to be written one character at a time
         if(inLineValidation(e) === false) return
